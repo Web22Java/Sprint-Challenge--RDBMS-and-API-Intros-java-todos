@@ -2,6 +2,7 @@ package com.lambdaschool.oauth2.controllers;
 
 import com.lambdaschool.oauth2.models.Todo;
 import com.lambdaschool.oauth2.services.TodoService;
+import com.lambdaschool.oauth2.services.UserService;
 import com.lambdaschool.oauth2.view.JustTheCount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -22,6 +23,8 @@ public class TodosController
 {
     @Autowired
     TodoService todoService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping(value = "/todos",
             produces = {"application/json"})
@@ -64,19 +67,23 @@ public class TodosController
     }
 
 
-    @PostMapping(value = "/todo")
+    @PostMapping(value = "/todo/{userid}")
     public ResponseEntity<?> addNewQuote(@Valid
                                          @RequestBody
-                                                 Todo newTodo) throws URISyntaxException
+                                                 Todo newTodo, @PathVariable
+            long userid) throws URISyntaxException
+
     {
+        newTodo.setUser(userService.findUserById(userid));
         newTodo = todoService.save(newTodo);
+
 
         // set the location header for the newly created resource
         HttpHeaders responseHeaders = new HttpHeaders();
-        URI newQuoteURI = ServletUriComponentsBuilder.fromCurrentRequest().path("/{quoteid}").buildAndExpand(newTodo.getTodosid()).toUri();
+        URI newQuoteURI = ServletUriComponentsBuilder.fromCurrentRequest().path("/{todoid}").buildAndExpand(newTodo.getTodosid()).toUri();
         responseHeaders.setLocation(newQuoteURI);
 
-        return new ResponseEntity<>(null, responseHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(newTodo.getTodosid(), responseHeaders, HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/todo/{todoid}")

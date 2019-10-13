@@ -11,7 +11,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service(value = "quoteService")
+@Service(value = "todoService")
 public class TodoServiceImpl implements TodoService
 {
     @Autowired

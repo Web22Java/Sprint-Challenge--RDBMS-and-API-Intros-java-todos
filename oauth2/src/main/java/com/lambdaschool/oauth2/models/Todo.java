@@ -17,7 +17,7 @@ public class Todo extends Auditable
     private String todo;
 
     @Column(nullable = false)
-    private boolean complete;
+    private boolean completed;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userid",
@@ -32,16 +32,16 @@ public class Todo extends Auditable
     public Todo(String todo, boolean complete, User user)
     {
         this.todo = todo;
-        this.complete = complete;
+        this.completed = complete;
         this.user = user;
     }
 
     public boolean isComplete() {
-        return complete;
+        return completed;
     }
 
     public void setComplete(boolean complete) {
-        this.complete = complete;
+        this.completed = complete;
     }
 
     public long getTodosid()
