@@ -1,6 +1,11 @@
-import com.lambdaschool.todo.models.*;
-import com.lambdaschool.todo.services.RoleService;
-import com.lambdaschool.todo.services.UserService;
+package com.lambdaschool.oauth2;
+
+import com.github.javafaker.Faker;
+import com.github.javafaker.service.FakeValuesService;
+import com.github.javafaker.service.RandomService;
+import com.lambdaschool.oauth2.models.*;
+import com.lambdaschool.oauth2.services.RoleService;
+import com.lambdaschool.oauth2.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -50,9 +55,9 @@ public class SeedData implements CommandLineRunner
         u1.getUseremails()
           .add(new Useremail(u1,
                              "admin@mymail.local"));
-        u1.getTodos().add(new Todo("Finish java-orders-swagger", new Date(), u1));
-        u1.getTodos().add(new Todo("Feed the turtles", new Date(), u1));
-        u1.getTodos().add(new Todo("Complete the sprint challenge", new Date(), u1));
+        u1.getTodos().add(new Todo("Finish java-orders-swagger", false, u1));
+        u1.getTodos().add(new Todo("Feed the turtles", false, u1));
+        u1.getTodos().add(new Todo("Complete the sprint challenge", false, u1));
 
         userService.save(u1);
 
@@ -75,8 +80,6 @@ public class SeedData implements CommandLineRunner
         u2.getUseremails()
           .add(new Useremail(u2,
                              "bunny@email.local"));
-        u2.getTodos().add(new Todo("Walk the dogs", new Date(), u2));
-        u2.getTodos().add(new Todo("provide feedback to my instructor", new Date(), u2));
         userService.save(u2);
 
         // user
@@ -109,5 +112,33 @@ public class SeedData implements CommandLineRunner
                            "misskitty@school.lambda",
                            users);
         userService.save(u5);
+
+        // using JavaFaker create a bunch of regular users
+        // https://www.baeldung.com/java-faker
+        // https://www.baeldung.com/regular-expressions-java
+
+        FakeValuesService fakeValuesService = new FakeValuesService(new Locale("en-US"),
+                                                                    new RandomService());
+        Faker nameFaker = new Faker(new Locale("en-US"));
+
+        for (int i = 0; i < 100; i++)
+        {
+            new User();
+            User fakeUser;
+
+            users = new ArrayList<>();
+            users.add(new UserRoles(new User(),
+                                    r2));
+            fakeUser = new User(nameFaker.name()
+                                         .username(),
+                                "password",
+                                nameFaker.internet()
+                                         .emailAddress(),
+                                users);
+            fakeUser.getUseremails()
+                    .add(new Useremail(fakeUser,
+                                       fakeValuesService.bothify("????##@gmail.com")));
+            userService.save(fakeUser);
+        }
     }
 }
